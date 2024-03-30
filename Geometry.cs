@@ -15,11 +15,16 @@ namespace cv3
         public Color PenColor { get; set; } = Color.Black;
         public Color FillColor { get; set; }
 
+        public bool Selected { get; set; }
+
         internal virtual void Draw(Graphics graphics)
         {
             graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             DrawOrigin(graphics);
+
+            if (Selected)
+                DrawSelection(graphics);
         }  
         
         private void DrawOrigin(Graphics g)
@@ -27,6 +32,14 @@ namespace cv3
             var pen = new Pen(PenColor, 1);
             g.DrawLine(pen, OX - 10, OY, OX + 10, OY);
             g.DrawLine(pen, OX, OY - 10, OX, OY + 10);
+        }
+
+        protected abstract void DrawSelection(Graphics g);
+
+        internal void MoveTo(int x, int y)
+        {
+            OX = x;
+            OY = y;
         }
     }
 }

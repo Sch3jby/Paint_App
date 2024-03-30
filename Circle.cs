@@ -46,5 +46,12 @@ namespace cv3
             graphics.DrawEllipse(pen,
                 OX - Radius, OY - Radius, 2 * Radius, 2 * Radius);
         }
+
+        protected override void DrawSelection(Graphics g)
+        {
+            var pen = new Pen(Color.Red, 1);
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+            g.DrawRectangle(pen, OX - Radius, OY - Radius, 2 * Radius, 2 * Radius);
+        }
     }
 }

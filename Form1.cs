@@ -21,6 +21,8 @@ namespace cv3
 
         List<Point> points = new List<Point>();
 
+        Geometry selectedGeometry;
+
         public Form1()
         {
             InitializeComponent();
@@ -116,33 +118,39 @@ namespace cv3
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
-                points.Add(e.Location);
+            selectedGeometry = items.Where(g => g.Selected).FirstOrDefault();
 
-            if(points.Count == 2 && (string)comboBox1.SelectedItem == nameof(Circle))
+            if (selectedGeometry == null)
             {
-                var radius = Math.Sqrt(Math.Pow(points[0].X - points[1].X, 2)
-                    + Math.Pow(points[0].Y - points[1].Y, 2));
-                items.Add(new Circle(points[0].X, points[0].Y, (int)radius,
-                    (int)numericUpDown1.Value, panel1.BackColor));
-                points.Clear();
-                Invalidate();
-            }
-            if (points.Count == 2 && (string)comboBox1.SelectedItem == nameof(Rectangle))
-            {               
-                items.Add(new Rectangle(points[0].X, points[0].Y, points[1].X, points[1].Y,
-                    (int)numericUpDown1.Value, panel1.BackColor));
-                points.Clear();
-                Invalidate();
-            }
-            if(points.Count > 2 
-                && (string)comboBox1.SelectedItem == nameof(Polygon)
-                && e.Button == MouseButtons.Right)
-            {
-                items.Add(new Polygon(points.ToArray(), (int)numericUpDown1.Value, 
-                    panel1.BackColor));
-                points.Clear();
-                Invalidate();
+
+                if (e.Button == MouseButtons.Left)
+                    points.Add(e.Location);
+
+                if (points.Count == 2 && (string)comboBox1.SelectedItem == nameof(Circle))
+                {
+                    var radius = Math.Sqrt(Math.Pow(points[0].X - points[1].X, 2)
+                        + Math.Pow(points[0].Y - points[1].Y, 2));
+                    items.Add(new Circle(points[0].X, points[0].Y, (int)radius,
+                        (int)numericUpDown1.Value, panel1.BackColor));
+                    points.Clear();
+                    Invalidate();
+                }
+                if (points.Count == 2 && (string)comboBox1.SelectedItem == nameof(Rectangle))
+                {
+                    items.Add(new Rectangle(points[0].X, points[0].Y, points[1].X, points[1].Y,
+                        (int)numericUpDown1.Value, panel1.BackColor));
+                    points.Clear();
+                    Invalidate();
+                }
+                if (points.Count > 2
+                    && (string)comboBox1.SelectedItem == nameof(Polygon)
+                    && e.Button == MouseButtons.Right)
+                {
+                    items.Add(new Polygon(points.ToArray(), (int)numericUpDown1.Value,
+                        panel1.BackColor));
+                    points.Clear();
+                    Invalidate();
+                }
             }
         }
 
@@ -158,6 +166,29 @@ namespace cv3
             {
                 panel1.BackColor = colorDialog1.Color;
             }
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (selectedGeometry != null)
+            {
+                selectedGeometry.MoveTo(e.X, e.Y);
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    var isNear = (e.X >= item.OX - 10 && e.X <= item.OX + 10 &&
+                        e.Y >= item.OY - 10 && e.Y <= item.OY + 10);
+                    item.Selected = isNear;
+                }
+            }
+            Invalidate();
+        }
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            selectedGeometry = null;
         }
     }
 }

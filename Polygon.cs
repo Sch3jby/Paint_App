@@ -22,7 +22,7 @@ namespace cv3
             }
             OX = sum / points.Length;
 
-            OY = (int)points.Average(p => p.Y);
+            OY = (int)points.Average(p => p.Y);             
         }
 
         public Polygon(Point[] pts, int penWidth)
@@ -50,6 +50,20 @@ namespace cv3
 
             var pen = new Pen(PenColor, PenWidth);
             graphics.DrawPolygon(pen, points);            
+        }
+
+        protected override void DrawSelection(Graphics g)
+        {
+            var pen = new Pen(Color.Red, 1);
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+
+            var ltx = points.Min(p => p.X);
+            var lty = points.Min(p => p.Y);
+            var rbx = points.Max(p => p.X);
+            var rby = points.Max(p => p.Y);
+
+            g.DrawRectangle(pen, ltx, lty,
+                rbx - ltx, rby - lty);
         }
     }
 }

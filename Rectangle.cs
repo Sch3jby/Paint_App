@@ -47,5 +47,13 @@ namespace cv3
             graphics.DrawRectangle(pen,
                 OX - (Width / 2), OY - (Height / 2), Width, Height);
         }
+
+        protected override void DrawSelection(Graphics g)
+        {
+            var pen = new Pen(Color.Red, 1);
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDot;
+            g.DrawRectangle(pen, OX - Width / 2 - 2, OY - Height / 2 - 2, 
+                Width + 4, Height + 4);
+        }
     }
 }
